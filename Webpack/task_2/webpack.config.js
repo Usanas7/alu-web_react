@@ -5,27 +5,40 @@ module.exports = {
   entry: './js/dashboard_main.js',
   output: {
     filename: 'bundle.js',
-    path: path.resolve(__dirname, 'public'),
-    clean: true, // clears old bundle files
+    path: path.resolve(__dirname, 'public')
   },
   module: {
     rules: [
       {
-        test: /\.css$/i,
-        use: ['style-loader', 'css-loader'], // process CSS files
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader']
       },
       {
-        test: /\.(png|jpg|jpeg|gif)$/i,
-        type: 'asset',
-        parser: {
-          dataUrlCondition: {
-            maxSize: 8 * 1024, // inline small images <8kb
-          },
-        },
-        generator: {
-          filename: 'images/[hash][ext][query]', // output folder
-        },
-      },
-    ],
+        test: /\.(png|jpe?g|gif)$/i,
+        use: [
+          'file-loader',
+          {
+            loader: 'image-webpack-loader',
+            options: {
+              mozjpeg: {
+                progressive: true,
+                quality: 65
+              },
+              optipng: {
+                enabled: true,
+              },
+              pngquant: {
+                quality: [0.65, 0.90],
+                speed: 4
+              }
+            }
+          }
+        ]
+      }
+    ]
   },
+  performance: {
+    maxAssetSize: 1000000,
+    maxEntrypointSize: 1000000
+  }
 };
